@@ -18,8 +18,8 @@ export default abstract class GameObject {
 	originX: Pixels;
 	originY: Pixels;
 	sprite: string | null = null;
-	#spriteImages: string[] | null = null; // only use if doing animation
-	#imageSpeed: Hertz = 1; // frames per second
+	#spriteImages: string[] | null = null;
+	#imageSpeed: Hertz = 1;
 	private animationRepeatableId: RepeatableId | null = null;
 	imageIndex: number = 0;
 	opacity: number = 1;
@@ -180,14 +180,16 @@ export default abstract class GameObject {
 	}
 	
 	set animatedSprite(spriteImages: string[]) {
+		if(spriteImages.length === 0)
+			throw new Error("can't set animation without sprites");
 		this.#spriteImages = spriteImages;
-		this.sprite = spriteImages[0];
+		this.sprite = spriteImages[0]!;
 		Game.removeRepeatable(this.animationRepeatableId);
 		this.animationRepeatableId = null;
 		this.animationRepeatableId = Game.addRepeatable(() => {
 			if(!this.#spriteImages) throw new Error("sprite images for animation not set")
 			this.imageIndex = (this.imageIndex + 1) % this.#spriteImages.length;
-			this.sprite = this.#spriteImages[this.imageIndex];
+			this.sprite = this.#spriteImages[this.imageIndex]!;
 		}, this.imageSpeed);
 	}
 	
@@ -197,7 +199,7 @@ export default abstract class GameObject {
 	set imageSpeed(imageSpeed: Hertz) {
 		this.#imageSpeed = imageSpeed;
 		if(this.animationRepeatableId)
-			Game._repeatables[this.animationRepeatableId].timesPerSecond = imageSpeed;
+			Game._repeatables[this.animationRepeatableId]!.timesPerSecond = imageSpeed;
 	}
 	
 	

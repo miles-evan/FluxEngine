@@ -1,4 +1,4 @@
-import type GameObject from "./GameObject.ts";
+import GameObject from "./GameObject.ts";
 
 
 export default class Game {
