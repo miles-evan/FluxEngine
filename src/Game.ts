@@ -36,6 +36,7 @@ export default class Game {
 		screen.style.position = "relative";
 		screen.style.overflow = "hidden";
 		screen.style.position = "relative";
+		screen.addEventListener("contextmenu", e => e.preventDefault());
 		
 		Game.onKeyDown = (e: KeyboardEvent): void => {
 			if(!(e.key in Game.keysDown))

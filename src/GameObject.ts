@@ -23,7 +23,9 @@ export default abstract class GameObject {
 	private animationRepeatableId: RepeatableId | null = null;
 	imageIndex: number = 0;
 	opacity: number = 1;
-	
+	onClick: AnyFunction | null = null;
+	onRightClick: AnyFunction | null = null;
+	onMiddleClick: AnyFunction | null = null;
 	
 	protected constructor(
 		x: Pixels = 0, y: Pixels = 0, width: Pixels = 0, height: Pixels = 0, sprite: string = "",
@@ -47,6 +49,12 @@ export default abstract class GameObject {
 		this.sprite = sprite;
 		
 		this.setHitbox(hitboxWidth, hitboxHeight);
+		
+		this._object.addEventListener("mousedown", e => {
+			if(e.button === 0) this.onClick?.();
+			if(e.button === 1) this.onMiddleClick?.();
+			if(e.button === 2) this.onRightClick?.();
+		});
 		
 		if(!Game._screen)
 			throw new Error("Must initialize screen");
@@ -178,6 +186,22 @@ export default abstract class GameObject {
 	get hitboxBottom(): Pixels {
 		return this.top + this._hitboxBottom;
 	}
+	
+	
+	get relativeMouseX(): Pixels {
+		return Game.mouseX - this.x;
+	}
+	
+	get relativeMouseY(): Pixels {
+		return Game.mouseY - this.x;
+	}
+	
+	
+	get mouseHovered(): boolean {
+		return Game.mouseX > this.left && Game.mouseX < this.right
+			&& Game.mouseY > this.top && Game.mouseY < this.bottom;
+	}
+	
 	
 	set animatedSprite(spriteImages: string[]) {
 		if(spriteImages.length === 0)
